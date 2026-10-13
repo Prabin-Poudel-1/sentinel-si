@@ -3,6 +3,7 @@ import hashlib
 import json
 import secrets
 import sqlite3
+from contextlib import closing
 import subprocess
 import time
 
@@ -132,7 +133,7 @@ def test_audit_redaction(controller):
     controller.gateway.raw(request(controller, task_id=marker))
     token = controller.approve("api_post", "sim:publish", marker)
     controller.gateway.call("api_post", "sim:publish", marker, token)
-    with sqlite3.connect(controller.audit_path) as db:
+    with closing(sqlite3.connect(controller.audit_path)) as db, db:
         dump = "\n".join(db.iterdump())
         rows = db.execute("SELECT timestamp,task,operation,decision,executed FROM audit").fetchall()
     assert marker not in dump and controller.key.hex() not in dump and token["mac"] not in dump
@@ -214,7 +215,7 @@ def test_oversized_frame_terminates_without_execution(controller):
         controller.gateway.call("write_file", "reports/summary.md", "x" * 70000)
     controller.process.wait(timeout=5)
     assert controller.process.returncode != 0
-    with sqlite3.connect(controller.audit_path) as db:
+    with closing(sqlite3.connect(controller.audit_path)) as db, db:
         assert db.execute("SELECT SUM(executed) FROM audit").fetchone()[0] == 0
 
 

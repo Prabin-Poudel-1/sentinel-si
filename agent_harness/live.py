@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import sqlite3
+from contextlib import closing
 from agent_harness.providers.local_http import LocalJsonModel, ModelError, validate_proposal
 from agent_harness.gateway import GatewayUnavailable
 from agent_harness.supervisor import Supervisor
@@ -75,7 +76,7 @@ class ModelAgent:
 
 
 def verify_audit(controller, report):
-    with sqlite3.connect(controller.audit_path) as db:
+    with closing(sqlite3.connect(controller.audit_path)) as db, db:
         db.row_factory = sqlite3.Row
         rows = [dict(row) for row in db.execute('SELECT * FROM audit ORDER BY id')]
     events = report['events']
