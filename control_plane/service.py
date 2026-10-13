@@ -1,4 +1,5 @@
 """Authenticated control plane. All agent requests still execute in the Rust gateway."""
+from contextlib import closing
 import hashlib
 import json
 import os
@@ -143,7 +144,7 @@ class Service:
         with self.lock:
             events = []
             if self.audit_path.exists():
-                with sqlite3.connect(self.audit_path) as db:
+                with closing(sqlite3.connect(self.audit_path)) as db, db:
                     db.row_factory = sqlite3.Row
                     events = [dict(r) for r in db.execute("SELECT * FROM audit ORDER BY id DESC LIMIT 500")]
                     counts = dict(db.execute("SELECT decision,COUNT(*) FROM audit GROUP BY decision"))

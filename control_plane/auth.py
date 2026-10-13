@@ -1,4 +1,5 @@
 """Single local administrator, scrypt password verifier, expiring revocable sessions."""
+from contextlib import closing, contextmanager
 import hashlib
 import hmac
 import json
@@ -29,8 +30,11 @@ class Auth:
         with self.db() as db:
             db.execute("CREATE TABLE IF NOT EXISTS sessions(digest TEXT PRIMARY KEY, csrf TEXT, expires INTEGER)")
 
+    @contextmanager
     def db(self):
-        return sqlite3.connect(self.db_path)
+        with closing(sqlite3.connect(self.db_path)) as connection:
+            with connection:
+                yield connection
 
     @staticmethod
     def initialize(directory, password):

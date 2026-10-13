@@ -31,6 +31,15 @@ def admin(tmp_path):
     service.close()
 
 
+def test_admin_database_connection_closes_after_context(admin):
+    service, *_ = admin
+    with service.auth.db() as connection:
+        assert connection.execute("SELECT 1").fetchone() == (1,)
+
+    with pytest.raises(sqlite3.ProgrammingError):
+        connection.execute("SELECT 1")
+
+
 def test_authenticated_approval_replay_and_revocation(admin):
     service, token, csrf, _ = admin
     with pytest.raises(AuthenticationError):
