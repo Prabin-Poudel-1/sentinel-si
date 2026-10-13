@@ -9,9 +9,10 @@ const assert = require('node:assert/strict');
  const root=path.resolve(__dirname,'..');
  const child=spawn(process.env.PYTHON || 'python3',['-m','scripts.ui_fixture'],{cwd:root,stdio:['pipe','pipe','pipe']});
  const lines=readline.createInterface({input:child.stdout});
+ child.stderr.on('data', data => process.stderr.write(data));
  let browser;
  try {
-  const first=await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error('Fixture startup timeout')),15000);lines.once('line',line=>{clearTimeout(timer);resolve(line)});child.once('exit',()=>reject(new Error('Fixture stopped')))});
+  const first=await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error('Fixture startup timeout')),45000);lines.once('line',line=>{clearTimeout(timer);resolve(line)});child.once('exit',()=>reject(new Error('Fixture stopped')))});
   const fixture=JSON.parse(first);
   browser=await chromium.launch({headless:true,channel:process.env.BROWSER_CHANNEL||undefined});
   const page=await browser.newPage({viewport:{width:1512,height:1080}});

@@ -92,7 +92,7 @@ def test_schema_wire_and_completion(endpoint):
     (200, envelope(json.dumps(ACTION), 'length'), 'model_incomplete'),
     (200, envelope(json.dumps({'action': ACTION})), 'proposal_schema'),
     (200, b'{"choices":[],"choices":[]}', 'response_json'),
-])
+], ids=lambda v: f"payload-{len(v)}-bytes" if isinstance(v, bytes) else None)
 def test_diagnostics_are_distinct_and_redacted(endpoint, status, raw, code):
     url, config = endpoint
     config.update(status=status, raw=raw)
