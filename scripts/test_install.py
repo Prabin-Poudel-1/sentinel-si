@@ -34,7 +34,9 @@ def main():
         tamper=subprocess.run([sys.executable,str(package/'installer.py'),'--prefix',str(prefix)],capture_output=True)
         assert tamper.returncode!=0 and not prefix.exists()
     report={'status':'passed','checks':['archive_checksum','offline_install','real_installed_gateway_allow_deny_approval','refuse_overwrite','marked_uninstall','tampered_manifest_rejected'],'artifact':archive.name}
-    (ROOT/('reports/public-installer-'+__import__('platform').system().lower()+'.json')).write_text(json.dumps(report,indent=2)+'\n')
+    report_path = ROOT / 'reports' / f'public-installer-{platform.system().lower()}.json'
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report))
 
 
