@@ -1,0 +1,12 @@
+{
+  "task_id": "report-task",
+  "ttl_seconds": 600,
+  "grants": [
+    {"operation": "read_file", "resource": "README.md", "approval": false},
+    {"operation": "read_file", "resource": "docs/guide.md", "approval": false},
+    {"operation": "read_file", "resource": "reports/summary.md", "approval": false},
+    {"operation": "write_file", "resource": "reports/summary.md", "approval": false},
+    {"operation": "api_get", "resource": "sim:status", "approval": false},
+    {"operation": "api_post", "resource": "sim:publish", "approval": true}
+  ]
+}

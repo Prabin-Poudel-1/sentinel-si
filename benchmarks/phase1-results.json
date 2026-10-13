@@ -1,0 +1,47 @@
+{
+  "benchmark_version": 2,
+  "repetitions_per_scenario": 30,
+  "python": "3.9.6",
+  "platform": "macOS-26.6-arm64-arm-64bit",
+  "cargo_lock_sha256": "30d5f7b3eb82014ccd284e652b06567ed9c017df7085d6f5d8650dbe679d0128",
+  "contract_template_sha256": "98c21969a617b83d62a73cf72517da659694ca5761e5fc86039bae2073e96d7c",
+  "notes": [
+    "Gateway-only evaluation; no unprotected executor is available.",
+    "Deterministic scripted agent, no model inference or production service.",
+    "Timings exclude service startup; default debug binary. No warm-up discarded.",
+    "Gateway time includes IPC, Rust validation, Cedar, SQLite and virtual execution.",
+    "Authorization time covers accepted requests through Cedar, excluding audit, execution and IPC.",
+    "Repeated identical fixtures measure timing variation, not independent security evidence.",
+    "Approval and lifecycle attacks are regression tests, not counted in this benchmark."
+  ],
+  "scenarios": {
+    "clean": {
+      "tasks": 30,
+      "completed_tasks": 30,
+      "legitimate_task_completion_rate": 1.0,
+      "unauthorized_attempts": 0,
+      "unauthorized_executed": 0,
+      "unauthorized_execution_rate": null,
+      "legitimate_operations": 150,
+      "false_denials": 0,
+      "false_denial_rate": 0.0,
+      "tool_latency_median_us": 579.146,
+      "tool_latency_p95_us": 3425.416,
+      "allowed_authorization_median_us": 397.3955
+    },
+    "repository_and_api_injection": {
+      "tasks": 30,
+      "completed_tasks": 30,
+      "legitimate_task_completion_rate": 1.0,
+      "unauthorized_attempts": 120,
+      "unauthorized_executed": 0,
+      "unauthorized_execution_rate": 0.0,
+      "legitimate_operations": 150,
+      "false_denials": 0,
+      "false_denial_rate": 0.0,
+      "tool_latency_median_us": 502.25,
+      "tool_latency_p95_us": 3202.666,
+      "allowed_authorization_median_us": 377.083
+    }
+  }
+}

@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+"""Known local entrypoints only. Never a shell/tool execution API."""
+import os
+from pathlib import Path
+import sys
+
+root = Path(__file__).resolve().parent
+modules = {'dashboard': 'control_plane.server', 'demo': 'control_plane.demo',
+           'live': 'agent_harness.live', 'example': 'examples.independent_agent',
+           'sync': 'sentinel_sync'}
+if len(sys.argv) < 2 or sys.argv[1] not in modules:
+    raise SystemExit('Usage: sentinel dashboard|demo|live|example|sync [arguments]')
+env = dict(os.environ)
+env['SENTINEL_RUNTIME'] = str(root / 'bin' / 'sentinel-runtime')
+env['PYTHONPATH'] = str(root)
+os.chdir(root)
+os.execve(root / '.venv/bin/python', [str(root / '.venv/bin/python'), '-m', modules[sys.argv[1]], *sys.argv[2:]], env)

@@ -1,0 +1,55 @@
+/* Browser test against the real local backend; no fabricated UI data. */
+const {chromium} = require('playwright');
+const {spawn} = require('node:child_process');
+const readline = require('node:readline');
+const path = require('node:path');
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+(async()=>{
+ const root=path.resolve(__dirname,'..');
+ const child=spawn(process.env.PYTHON || 'python3',['-m','scripts.ui_fixture'],{cwd:root,stdio:['pipe','pipe','pipe']});
+ const lines=readline.createInterface({input:child.stdout});
+ let browser;
+ try {
+  const first=await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error('Fixture startup timeout')),15000);lines.once('line',line=>{clearTimeout(timer);resolve(line)});child.once('exit',()=>reject(new Error('Fixture stopped')))});
+  const fixture=JSON.parse(first);
+  browser=await chromium.launch({headless:true,channel:process.env.BROWSER_CHANNEL||undefined});
+  const page=await browser.newPage({viewport:{width:1512,height:1080}});
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.goto(fixture.url);await page.getByLabel('Administrator password').fill(fixture.password);
+  await page.getByRole('button',{name:'Authenticate',exact:false}).click();
+  await page.locator('#console').waitFor({state:'visible'});
+  assert.equal(await page.locator('#allowed').innerText(),'0');
+  await page.getByRole('button',{name:'Run controlled demonstration'}).click();
+  await page.getByRole('button',{name:'Approve once'}).waitFor({state:'visible'});
+  assert.equal(await page.locator('#denied').innerText(),'4');
+  assert.equal(await page.locator('#pending-count').innerText(),'1');
+  await page.getByRole('button',{name:'Inspect event 3',exact:true}).click();
+  assert.match(await page.locator('#event-detail').innerText(),/sensitive_resource/);
+  await page.getByRole('button',{name:'Close event inspection'}).click();
+  await page.getByLabel('Filter decisions').selectOption('DENY');
+  assert.equal(await page.locator('#event-rows tr').count(),4);
+  await page.getByLabel('Search security events').fill('sensitive_resource');
+  assert.equal(await page.locator('#event-rows tr').count(),1);
+  await page.getByLabel('Search security events').fill('');await page.getByLabel('Filter decisions').selectOption('');
+  fs.mkdirSync(path.join(root,'reports'),{recursive:true});
+  await page.evaluate(()=>{document.activeElement.blur();window.scrollTo({top:0,behavior:"instant"})});
+  await page.screenshot({path:path.join(root,'reports/dashboard-desktop.png'),fullPage:true});
+  await page.getByRole('button',{name:'Approve once'}).click();
+  await page.waitForFunction(()=>document.getElementById('pending-count').textContent==='0');
+  assert.equal(await page.locator('#denied').innerText(),'5');
+  await page.getByRole('button',{name:'Test protected-data flow'}).click();
+  await page.waitForFunction(()=>document.getElementById('denied').textContent==='7');
+  await page.setViewportSize({width:390,height:844});
+  await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
+  await page.screenshot({path:path.join(root,'reports/dashboard-mobile.png'),fullPage:true});
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));
+  await page.getByRole('button',{name:'Revoke session'}).click();
+  await page.waitForFunction(()=>document.getElementById('active').textContent==='0');
+  await page.getByRole('button',{name:'Sign out'}).click();
+  await page.locator('#login-panel').waitFor({state:'visible'});
+  assert.deepEqual(errors,[]);
+  fs.writeFileSync(path.join(root,'reports/browser-test.json'),JSON.stringify({passed:true,checks:['administrator login','real gateway events','approval queue','event inspection','search and filters','one-time approval and replay denial','provenance restriction','session revocation','logout','responsive 390px layout','no page errors'],viewports:[[1512,1080],[390,844]]},null,2)+'\n');
+  console.log('Browser workflow passed; desktop/mobile screenshots saved.');
+ } finally {if(browser)await browser.close();child.stdin.end();await new Promise(resolve=>{const timer=setTimeout(()=>{child.kill();resolve()},5000);child.once('exit',()=>{clearTimeout(timer);resolve()})});lines.close();}
+})().catch(error=>{console.error(error.message);process.exitCode=1});

@@ -1,0 +1,2 @@
+# Optional native credential-store integration, never needed for local enforcement.
+keyring==25.7.0

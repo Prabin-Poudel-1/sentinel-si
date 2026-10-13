@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "seed": 1729,
+  "repetitions": 20,
+  "platform": "macOS-26.6-arm64-arm-64bit",
+  "python": "3.12.14",
+  "arms": {
+    "A_unrestricted_sim": {
+      "tasks": 20,
+      "completed_tasks": 0,
+      "unauthorized_attempts": 120,
+      "unauthorized_executed": 120,
+      "unauthorized_execution_rate": 1.0,
+      "legitimate_operations": 140,
+      "false_denials": 0,
+      "false_denial_rate": 0.0,
+      "approval_frequency": 0.0,
+      "tool_latency_median_us": 0.333,
+      "tool_latency_p95_us": 0.541,
+      "authorization_median_us": null,
+      "elapsed_seconds_with_startup": 0.0015156250447034836,
+      "cpu_seconds_self_and_children": 0.0014300000000000007,
+      "process_high_water_rss_native_units": {
+        "self": 23789568,
+        "children": 0
+      }
+    },
+    "B_basic_tools": {
+      "tasks": 20,
+      "completed_tasks": 0,
+      "unauthorized_attempts": 120,
+      "unauthorized_executed": 60,
+      "unauthorized_execution_rate": 0.5,
+      "legitimate_operations": 140,
+      "false_denials": 0,
+      "false_denial_rate": 0.0,
+      "approval_frequency": 0.0,
+      "tool_latency_median_us": 0.333,
+      "tool_latency_p95_us": 0.417,
+      "authorization_median_us": null,
+      "elapsed_seconds_with_startup": 0.0012484579347074032,
+      "cpu_seconds_self_and_children": 0.0012070000000000032,
+      "process_high_water_rss_native_units": {
+        "self": 23805952,
+        "children": 0
+      }
+    },
+    "C_static_policy": {
+      "tasks": 20,
+      "completed_tasks": 0,
+      "unauthorized_attempts": 120,
+      "unauthorized_executed": 20,
+      "unauthorized_execution_rate": 0.16666666666666666,
+      "legitimate_operations": 140,
+      "false_denials": 0,
+      "false_denial_rate": 0.0,
+      "approval_frequency": 0.07692307692307693,
+      "tool_latency_median_us": 0.875,
+      "tool_latency_p95_us": 1.167,
+      "authorization_median_us": null,
+      "elapsed_seconds_with_startup": 0.0013664159923791885,
+      "cpu_seconds_self_and_children": 0.0013289999999999969,
+      "process_high_water_rss_native_units": {
+        "self": 23805952,
+        "children": 0
+      }
+    },
+    "D_sentinel_full": {
+      "tasks": 20,
+      "completed_tasks": 20,
+      "unauthorized_attempts": 120,
+      "unauthorized_executed": 0,
+      "unauthorized_execution_rate": 0.0,
+      "legitimate_operations": 140,
+      "false_denials": 0,
+      "false_denial_rate": 0.0,
+      "approval_frequency": 0.0,
+      "tool_latency_median_us": 500.91700000000003,
+      "tool_latency_p95_us": 3181.167,
+      "authorization_median_us": 368.14599999999996,
+      "elapsed_seconds_with_startup": 0.4651500000618398,
+      "cpu_seconds_self_and_children": 0.426502,
+      "process_high_water_rss_native_units": {
+        "self": 24379392,
+        "children": 25755648
+      }
+    }
+  },
+  "limitations": [
+    "Deterministic repeated fixtures; no live-model or AgentDojo score.",
+    "A/B/C are in-memory research comparators, not deployable security engines.",
+    "D includes runtime startup, SQLite and Wasmtime initialization; timings are not matched overhead ablations.",
+    "RSS values are process-wide high-water observations, not per-task memory or incremental overhead; bytes on macOS, KiB on Linux.",
+    "Isolation, race defenses, approval replay and service failure are separate regression tests, not attack samples in this table.",
+    "Provenance is sticky task taint; strictness can cause false denials on other workloads."
+  ]
+}
