@@ -3,6 +3,7 @@ import argparse
 import json
 from pathlib import Path
 import sqlite3
+from contextlib import closing
 from agent_harness.agent import ScriptedAgent
 from agent_harness.supervisor import Supervisor
 
@@ -16,7 +17,7 @@ def run_demo(approve_publish=False, injected=True):
             token = controller.approve("api_post", "sim:publish", "demo summary")
             publication.append(controller.gateway.call("api_post", "sim:publish", "demo summary", approval=token))
             publication.append(controller.gateway.call("api_post", "sim:publish", "demo summary", approval=token))
-        with sqlite3.connect(controller.audit_path) as db:
+        with closing(sqlite3.connect(controller.audit_path)) as db, db:
             db.row_factory = sqlite3.Row
             rows = [dict(row) for row in db.execute("SELECT * FROM audit ORDER BY id")]
         by_id = {row["id"]: row for row in rows}

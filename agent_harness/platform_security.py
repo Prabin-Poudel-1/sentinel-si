@@ -106,7 +106,7 @@ def private_directory(directory, *, initialize=True):
         descriptor.SetSecurityDescriptorControl(ws.SE_DACL_PROTECTED, ws.SE_DACL_PROTECTED)
         attributes.SECURITY_DESCRIPTOR = descriptor
         wf.CreateDirectory(str(path), attributes)
-    handle = wf.CreateFile(str(path), wc.READ_CONTROL | wc.WRITE_DAC | nt.FILE_READ_ATTRIBUTES,
+    handle = wf.CreateFile(str(path), wc.READ_CONTROL | wc.WRITE_DAC | nt.FILE_READ_ATTRIBUTES | nt.FILE_LIST_DIRECTORY,
                            wc.FILE_SHARE_READ | wc.FILE_SHARE_WRITE, None, wc.OPEN_EXISTING,
                            wc.FILE_FLAG_BACKUP_SEMANTICS | wf.FILE_FLAG_OPEN_REPARSE_POINT, None)
     guard = DirectoryGuard(handle)

@@ -8,6 +8,7 @@ jobs:
       run:
         shell: bash
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-2022, windows-2025]
     runs-on: ${{ matrix.os }}

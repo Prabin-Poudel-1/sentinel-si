@@ -3,6 +3,7 @@ import importlib.util
 import json
 import os
 import sqlite3
+from contextlib import closing
 import subprocess
 import sys
 import time
@@ -33,7 +34,7 @@ def test_malformed_argument_types_are_audited(controller, field, value):
     req[field] = value
     result = controller.gateway.raw(req)
     assert result["decision"] == "DENY" and result["reason"] == "malformed_request"
-    with sqlite3.connect(controller.audit_path) as db:
+    with closing(sqlite3.connect(controller.audit_path)) as db, db:
         assert db.execute("SELECT decision,executed FROM audit WHERE id=?", (result["event_id"],)).fetchone() == ("DENY", 0)
 
 
@@ -88,7 +89,7 @@ def test_empty_grants_default_deny():
 
 
 def test_live_audit_failure_closes_gateway(controller):
-    with sqlite3.connect(controller.audit_path) as db:
+    with closing(sqlite3.connect(controller.audit_path)) as db, db:
         db.execute("DROP TABLE audit")
     with pytest.raises(GatewayUnavailable):
         controller.gateway.call("write_file", "reports/summary.md", "must fail")

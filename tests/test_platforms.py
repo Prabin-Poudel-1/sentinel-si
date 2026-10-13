@@ -90,6 +90,17 @@ def test_windows_state_acl_inheritance_and_handle_pinning(tmp_path):
         sd = ws.GetNamedSecurityInfo(str(item), ws.SE_FILE_OBJECT, ws.DACL_SECURITY_INFORMATION)
         acl = sd.GetSecurityDescriptorDacl()
         assert {ws.ConvertSidToStringSid(acl.GetAce(i)[2]) for i in range(acl.GetAceCount())} == {user, 'S-1-5-18'}
+        # Conflicting DELETE access must be rejected while the guard is open.
+        import win32file as wf
+        import pywintypes
+        with pytest.raises(pywintypes.error) as failure:
+            attempt = wf.CreateFile(
+                str(path), wc.DELETE,
+                wc.FILE_SHARE_READ | wc.FILE_SHARE_WRITE | wc.FILE_SHARE_DELETE,
+                None, wc.OPEN_EXISTING, wc.FILE_FLAG_BACKUP_SEMANTICS, None
+            )
+            attempt.Close()
+        assert failure.value.args[0] == 32
         # Handle denies DELETE sharing: root cannot be renamed out from under its owner.
         with pytest.raises(OSError):
             path.rename(tmp_path / 'substituted')
