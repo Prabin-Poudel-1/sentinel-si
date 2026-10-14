@@ -2,9 +2,10 @@
 
 Candidate: **0.3.0-rc.1**, reviewed 2026-10-14.
 Status: **functional local candidate; NOT READY for public activation**.
-No commits, pushes, releases, deployments, external account changes or public laptop
-listeners were created. Download buttons intentionally remain disabled until the owner
-supplies a verified official repository/release. Production API fails closed by default.
+The official repository is now Prabin-Poudel-1/sentinel-si. The completed four-platform
+CI and maintainer-reported physical Apple Silicon/Gitleaks evidence are recorded in
+[Phase 1 release evidence](release-validation-v0.3.0-rc.1.md). This documentation
+update does not publish a release or deploy services. Production API remains disabled.
 
 ## What works
 
@@ -30,16 +31,18 @@ CSRF and pairing behavior are tested on local Workers. Native keyring selection 
 closed and is unit-tested with injected stores; a separate native macOS Keychain smoke test stored/read/replaced/deleted a temporary synthetic entry successfully. No existing credentials were read.
 Free-tier capacity was checked against official limits, with query-count/quota tests,
 but real edge CPU/usage and hosted bindings remain unmeasured. Release workflows are
-prepared and SHA-pinned, not dispatched. Artifacts are unsigned and unnotarized.
+SHA-pinned and have passed on all four macOS/Linux targets; see the Phase 1 evidence. Artifacts are unsigned and unnotarized.
 
 **NOT VERIFIED:** real GitHub OAuth, hosted Cloudflare/D1/Pages, production HTTPS and
-cookie configuration, Linux/Windows native credential persistence, Intel macOS, Windows10/11,
-WSL2 itself, remote CI and independent reproducibility/security certification.
+cookie configuration, Linux/Windows native credential persistence, physical Intel macOS, native Windows10/11,
+WSL2 itself, direct ChatGPT/Claude integrations and independent reproducibility/security certification.
 Historical Qwen reports are retained; Qwen was not re-run for this cloud extension.
 
-**BLOCKED:** official public URLs/disclosure channel and history audit need the actual
-repository and owner account configuration. Production activation and publication remain
-disabled pending those and the production/keyring verification checklist.
+**BLOCKED:** production cloud validation, remaining platform credential-store checks
+and signed/notarized download behavior are still open. The official repository and
+private disclosure are recorded in SECURITY.md. The clean nine-commit Gitleaks scan
+is maintainer-reported and requires a final-tag refresh. Production activation and
+release publication remain separate owner-authorized actions.
 
 ## Verification results
 
@@ -89,8 +92,9 @@ state link/mode checks; see security/security-audit.md for severity and evidence
 | Documentation |README.md, SECURITY.md, LICENSE, .gitignore, docs/installation.md, deployment.md, architecture.md, security/*; generic paths in local-llm-integration.md |
 
 Rust authorization/execution sources, model adapter and existing security policies
-were preserved. No Git metadata exists, so this is a component change inventory,
-not a fabricated Git diff. Source archives explicitly exclude private working state,
+were preserved in the original implementation. This historical component inventory
+predates the official repository; current CI and history-scan scope are recorded in
+the Phase 1 evidence above. Source archives explicitly exclude private working state,
 raw historical reports, build outputs and dependencies. Full evidence remains in the
 local workspace; public-safe summary reports identify executed checks.
 

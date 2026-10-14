@@ -3,8 +3,14 @@
 **Public candidate 0.3.0-rc.1:** local SDK, opt-in metadata synchronization, Workers/D1
 backend and a responsive observational cloud dashboard are implemented. The complete
 local user journey passes with synthetic identities. **Public deployment is NOT READY**
-until production OAuth/hosting/platform validation and repository/disclosure gates close.
-No website or release has been published. See the [engineering report](docs/public-release-report.md).
+until production OAuth/hosting validation and remaining release gates close.
+The official repository is [Prabin-Poudel-1/sentinel-si](https://github.com/Prabin-Poudel-1/sentinel-si); private vulnerability reporting is documented in [SECURITY.md](SECURITY.md).
+Four-platform release CI passed (macOS ARM64/Intel, Linux ARM64/x64). Physical Apple
+Silicon testing and a clean nine-commit Gitleaks scan are maintainer-reported. macOS
+packages remain unsigned/unnotarized, with a Gatekeeper limitation for downloads.
+See [Phase 1 release evidence](docs/release-validation-v0.3.0-rc.1.md) for scope and run links.
+Production cloud, native Windows 10/11 and direct ChatGPT/Claude integrations remain
+unverified. Release publication is outside this documentation phase. See the [engineering report](docs/public-release-report.md).
 
 - [Install the local candidate](docs/installation.md)
 - [Start the public site/API locally](cloud/README.md)
@@ -21,7 +27,8 @@ through the strict schema adapter and real gateway. See the [integration report]
 for commands, audit evidence, safe stops and model-quality limitations.
 
 **Windows extension:** native Windows 10/11 portability code and CI are added, but
-Windows builds/tests have not run here. Compatibility is **not verified**. Native
+Windows Server 2022/2025 CI has passed. Native Windows 10/11 compatibility and
+security remain **unverified**; server CI does not establish client-platform protection. Native
 Windows agent file tools are disabled; use the documented WSL2 Linux route for
 Unix file isolation. See [Windows setup and security scope](docs/windows.md).
 Phase 2 extends the working SentinelOS foundation; internal package names remain
@@ -118,7 +125,8 @@ PYTHON=.venv/bin/python node scripts/browser_smoke.cjs
 
 Set `BROWSER_CHANNEL=chrome` to use an installed Chrome. Browser tests use generated
 synthetic credentials, disposable state and real backend events. CI configuration
-covers macOS/Linux; remote CI itself has not been run in this session.
+has completed on macOS/Linux and Windows Server; see the linked Phase 1 evidence.
+Hosted CI results do not replace native Windows 10/11 or production-cloud validation.
 
 Optional locally hosted model, only when explicitly configured (Ollama/Qwen commands are in the integration report):
 

@@ -1,21 +1,30 @@
 # Installation candidate 0.3.0-rc.1
 
-This release candidate is local-only until the release-readiness gates are closed.
-No official repository or download URL is configured yet. Do not trust similarly named packages.
+Official repository: [Prabin-Poudel-1/sentinel-si](https://github.com/Prabin-Poudel-1/sentinel-si).
+Use only owner-published, verified assets from its Releases page when available.
+This documentation phase does not publish a release. See [completed Phase 1 evidence](release-validation-v0.3.0-rc.1.md); production activation remains gated.
 
 ## Platform scope
 
 | Platform | Status |
 |---|---|
-| macOS Apple Silicon | Local Rust/Python regression and bundled-runtime installer tested; unsigned, not notarized |
-| Linux | Linux ARM64 Debian12 container: source tests and bundled installer tested; x64 build workflow supplied |
-| macOS Intel | Build workflow supplied; not executed in this environment |
+| macOS Apple Silicon | Release CI passed; physical testing completed (maintainer-reported); unsigned/unnotarized |
+| Linux | Release CI and installer checks passed on ARM64 and x86_64; earlier ARM64 Debian12 local tests retained |
+| macOS Intel | Release CI and installer checks passed on macos-15-intel; no physical Intel test claimed |
 | Windows WSL2 | Use the Linux installation route inside WSL2; WSL2 itself not exercised here |
 | Native Windows 10/11 | Portability candidate only; no verified package; host file tools disabled |
 
-The Linux ARM64 binary was built against Debian12/glibc2.36. Other libc/architecture
+The earlier locally built Linux ARM64 binary used Debian12/glibc2.36; the completed
+release CI builds use Ubuntu 24.04. Match system-library requirements to the specific
+artifact and build provenance, rather than assuming the local binary baseline applies
+to CI artifacts. Other libc/architecture
 combinations require their own build and verification. The macOS artifact was exercised
 on this Apple Silicon Mac, not every macOS version.
+
+**Gatekeeper:** these macOS packages are unsigned and unnotarized. A downloaded,
+quarantined executable may be blocked even though CI and physical Mac tests passed.
+Seamless Gatekeeper launch is not verified. Do not disable macOS protections or remove
+quarantine as a required installation step.
 
 Prerequisites: Python 3.12+ with OpenSSL scrypt and venv. Bundled packages include
 Rust runtime and SQLite; no Rust compiler is needed to run them. Source builds need

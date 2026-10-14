@@ -1,7 +1,9 @@
 # Zero-mandatory-cost publication runbook
 
-**Prepared only. No account, repository, Worker, Pages site, D1 database or release
-was created or deployed by this work. Production remains disabled.** Resolve the
+**Production deployment remains gated.** The official repository is now
+[Prabin-Poudel-1/sentinel-si](https://github.com/Prabin-Poudel-1/sentinel-si), and
+four-platform release CI is complete. This documentation phase neither deploys cloud
+services nor publishes a release; production cloud remains unverified and disabled. Resolve the
 release-readiness gates first. Every command below that changes a remote service is
 for the owner to run deliberately, after authorization and review.
 
@@ -37,9 +39,10 @@ reduce beta capacity if needed; local timings do not establish the10ms edge budg
 
 ## 1. Prepare an official public repository
 
-Select the owner/repository name, confirm the MIT license/copyright, configure private
-vulnerability reporting and maintainer2FA. Scan source and full history before upload;
-this workspace has no `.git`, so historical secret exposure could not be assessed.
+Use the official repository above. Private vulnerability reporting is documented in
+SECURITY.md; confirm the MIT license/copyright and maintainer 2FA. A clean Gitleaks
+history scan of nine commits is maintainer-reported. Refresh scanning for the final
+release tag and artifacts; do not extend that result to subsequent commits.
 Use branch protection, required reviews/checks and no untrusted self-hosted PR runners.
 Keep production secrets out of repository/Actions PR jobs. The supplied workflows have
 read-only contents permissions and verified full-SHA action references.
@@ -118,8 +121,9 @@ local E2E report is not evidence that these production checks succeeded.
 
 ## 6. Publish a verified installation release
 
-Manually dispatch `release-candidate.yml` in the reviewed official repository. It
-builds platform artifacts only; it does not publish. Review successful platform tests,
+The [four-platform candidate workflow has passed](release-validation-v0.3.0-rc.1.md).
+Use artifacts from the reviewed successful run; a new build is needed only if release
+inputs change. The workflow builds artifacts only and does not publish. Review successful platform tests,
 download artifacts, verify manifests/SHA256 and installer behavior. Do not label any
 unexecuted matrix platform as verified. Native Windows has no verified artifact.
 

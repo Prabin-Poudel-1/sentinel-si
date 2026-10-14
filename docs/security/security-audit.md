@@ -17,7 +17,7 @@ penetration test or certification**. Synthetic local fixtures only; no productio
 | S06 Low — fixed | Floating workflow action tags and broad artifact copying increase supply-chain risk. | Full action SHAs verified from upstream refs; read-only tokens, no secret-bearing PR jobs; allowlisted runtime/source builders and scanners, verified local installer. |
 | S07 Low — fixed/excluded | Compiler paths and XML reports contained the local machine's username/path. | Remapped release build paths, generic documentation paths, raw reports excluded from source/runtime artifacts; scanner reports no matches. |
 | S08 High release gate — disabled/unverified | Production OAuth, real hosted cookie/service-binding behavior, cross-platform native keyring and edge free CPU limit cannot be established by mocks. Unsafe activation without validation would expose public authentication/credentials to unverified integration. | PRODUCTION_ENABLED=false; exact owner-run staging/production checklist before enabling. No production compatibility claim. This is an assurance gap, not a demonstrated exploitable flaw. |
-| S09 High publication gate — blocked | No actual Git history, official repository/disclosure URL or published release identity exists here. Historical secret exposure cannot be ruled out; users cannot authenticate official downloads. | Do not publish automatically. Configure identity/disclosure, scan complete history, confirm license and verify release artifacts before publication. |
+| S09 High publication gate — partially closed | Official repository and private disclosure are now recorded in SECURITY.md; a clean nine-commit Gitleaks history scan is maintainer-reported. | Refresh scanning for the final tag/artifacts and confirm release identity/license. Completed four-platform CI does not authorize publication. See the Phase 1 evidence. |
 
 No demonstrated unresolved Critical/High exploit was found in the locally enabled
 supported paths. That is not proof none exists. Public activation remains NOT READY
@@ -41,10 +41,15 @@ status. Sync cannot approve, change contracts or send local commands.
 
 ## Audit limitations
 
-No `.git` directory: full history/committed-secret audit is unavailable. Private local
+The initial workspace lacked Git history. The official repository now exists, with a
+maintainer-reported clean Gitleaks history scan of nine commits. The reviewed main
+contains 11 reachable commits; no full-current-history scan is claimed by this update. Private local
 state was identified by location and excluded, not printed or copied. High-signal
 secret scanning is not exhaustive entropy analysis. Dependency audits found no known
 advisories at run time; they do not certify dependency safety. macOS/Linux tests are
-local execution; Windows, WSL2, remote Actions, production Cloudflare/GitHub and Linux Secret Service integration were not executed.
+historical local execution. Remote release Actions now passed on four macOS/Linux
+targets, and Windows Server regression CI passed. Native Windows 10/11, WSL2, direct
+ChatGPT/Claude integrations, production cloud and Linux Secret Service remain unverified.
+See [Phase 1 evidence](../release-validation-v0.3.0-rc.1.md).
 A separate macOS native Keychain synthetic lifecycle passed and removed its test entry. See the final engineering report
 for exact counts, commands and failed-check corrections.
