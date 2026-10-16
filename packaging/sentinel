@@ -2,16 +2,51 @@
 """Known local entrypoints only. Never a shell/tool execution API."""
 import os
 from pathlib import Path
+import subprocess
 import sys
 
 root = Path(__file__).resolve().parent
-modules = {'dashboard': 'control_plane.server', 'demo': 'control_plane.demo',
-           'live': 'agent_harness.live', 'example': 'examples.independent_agent',
-           'sync': 'sentinel_sync'}
+modules = {
+    "dashboard": "control_plane.server",
+    "demo": "control_plane.demo",
+    "live": "agent_harness.live",
+    "example": "examples.independent_agent",
+    "sync": "sentinel_sync",
+}
+
 if len(sys.argv) < 2 or sys.argv[1] not in modules:
-    raise SystemExit('Usage: sentinel dashboard|demo|live|example|sync [arguments]')
+    raise SystemExit(
+        "Usage: sentinel dashboard|demo|live|example|sync [arguments]"
+    )
+
+windows = os.name == "nt"
+python = root / ".venv" / (
+    "Scripts/python.exe" if windows else "bin/python"
+)
+runtime = root / "bin" / (
+    "sentinel-runtime.exe" if windows else "sentinel-runtime"
+)
+
+if not python.is_file():
+    raise SystemExit("Sentinel Python environment is missing; reinstall the package.")
+
+if not runtime.is_file():
+    raise SystemExit("Sentinel runtime binary is missing; reinstall the package.")
+
 env = dict(os.environ)
-env['SENTINEL_RUNTIME'] = str(root / 'bin' / 'sentinel-runtime')
-env['PYTHONPATH'] = str(root)
+env["SENTINEL_RUNTIME"] = str(runtime)
+env["PYTHONPATH"] = str(root)
 os.chdir(root)
-os.execve(root / '.venv/bin/python', [str(root / '.venv/bin/python'), '-m', modules[sys.argv[1]], *sys.argv[2:]], env)
+
+command = [
+    str(python),
+    "-m",
+    modules[sys.argv[1]],
+    *sys.argv[2:],
+]
+
+if windows:
+    completed = subprocess.run(command, env=env, cwd=root, check=False)
+    raise SystemExit(completed.returncode)
+
+os.execve(str(python), command, env)
