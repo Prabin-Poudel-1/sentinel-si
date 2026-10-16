@@ -43,7 +43,7 @@ jobs:
       - run: python scripts/third_party.py
 
       - name: Download Windows dependency
-        run: python -m pip download --only-binary=:all: --no-deps --dest release-vendor pywin32==312
+        run: "python -m pip download --only-binary=:all: --no-deps --dest release-vendor pywin32==312"
 
       - name: Package Windows candidate
         run: python scripts/build_release.py --windows-wheel release-vendor/pywin32-312-cp312-cp312-win_amd64.whl
