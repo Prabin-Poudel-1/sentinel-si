@@ -42,7 +42,15 @@ def main():
             package = temp / archive.name.removesuffix('.tar.gz')
         prefix = temp / 'installed'
         installer = [sys.executable, str(package / 'installer.py')]
-        subprocess.run(installer + ['--prefix', str(prefix)], check=True, capture_output=True, text=True)
+        try:
+            subprocess.run(
+                installer + ['--prefix', str(prefix)],
+                check=True, capture_output=True, text=True
+            )
+        except subprocess.CalledProcessError as exc:
+            raise SystemExit(
+                f"Installer failed.\nSTDOUT:\n{exc.stdout}\nSTDERR:\n{exc.stderr}"
+            ) from exc
         if windows:
             executable = [str(prefix / '.venv' / 'Scripts' / 'python.exe'), str(prefix / 'sentinel')]
         else:
