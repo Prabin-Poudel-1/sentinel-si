@@ -54,7 +54,15 @@ def build(binary, output, windows_wheel=None):
                 lower = entry.lower()
                 marker = '.dist-info/licenses/'
                 tail = entry[lower.find(marker) + len(marker):] if marker in lower else Path(entry).name
-                files['vendor/pywin32-licenses/' + tail] = wheel_archive.read(entry)
+                from pathlib import PurePosixPath
+                dest = 'vendor/pywin32-licenses/' + tail
+                taken = {k.lower() for k in files}
+                n = 2
+                while dest.lower() in taken:
+                    p = PurePosixPath(tail)
+                    dest = 'vendor/pywin32-licenses/' + str(p.with_name(f'{p.stem}-{n}{p.suffix}'))
+                    n += 1
+                files[dest] = wheel_archive.read(entry)
     runtime = files['bin/' + binary_name]
     if any(marker in runtime for marker in (b'/Users/', b'/home/runner/', b'C:\\Users\\', b'\\_work\\')):
         raise ValueError('Build with Rust path remapping to avoid personal or runner paths')
