@@ -123,7 +123,7 @@ def verify(root):
             if parent != root and _is_reparse(parent):
                 raise ValueError('Reparse point in package path')
         if hashlib.sha256(file.read_bytes()).hexdigest() != digest:
-            raise ValueError('Package verification failed')
+            raise ValueError(f'Package verification failed: {name}')
     return manifest
 
 

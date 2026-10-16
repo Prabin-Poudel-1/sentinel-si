@@ -58,6 +58,12 @@ def build(binary, output, windows_wheel=None):
     runtime = files['bin/' + binary_name]
     if any(marker in runtime for marker in (b'/Users/', b'/home/runner/', b'C:\\Users\\', b'\\_work\\')):
         raise ValueError('Build with Rust path remapping to avoid personal or runner paths')
+    seen = {}
+    for key in files:
+        seen.setdefault(key.lower(), []).append(key)
+    clashes = {k: v for k, v in seen.items() if len(v) > 1}
+    if clashes:
+        raise ValueError(f'Case-insensitive name collision in package: {clashes}')
     manifest = {'version': VERSION, 'system': platform.system(), 'machine': platform.machine(),
                 'files': {name: hashlib.sha256(data).hexdigest() for name, data in sorted(files.items())},
                 'provenance': 'Local build; unsigned and not notarized; see CI and Cargo.lock'}
