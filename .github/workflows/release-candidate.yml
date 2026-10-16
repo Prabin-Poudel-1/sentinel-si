@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14, macos-15-intel, ubuntu-24.04, ubuntu-24.04-arm]
+        os: [macos-14, macos-15-intel, ubuntu-24.04, ubuntu-24.04-arm, windows-2022]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -23,12 +23,27 @@ jobs:
       - run: cargo test --locked
       - run: cargo build --locked
       - run: python -m pytest -q
-      - name: Build without personal paths
+      - name: Build without personal paths (macOS/Linux)
+        if: runner.os != 'Windows'
         shell: bash
         run: RUSTFLAGS="--remap-path-prefix=$PWD=/sentinel-build --remap-path-prefix=$HOME/.cargo=/cargo" cargo build --release --locked
+      - name: Build without personal paths (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $env:RUSTFLAGS = "--remap-path-prefix=$($PWD.Path)=/sentinel-build --remap-path-prefix=$HOME\.cargo=/cargo"
+          cargo build --release --locked
       - run: cargo fetch --locked
       - run: python scripts/third_party.py
-      - run: python scripts/build_release.py
+      - name: Download offline Windows dependency
+        if: runner.os == 'Windows'
+        run: python -m pip download --only-binary=:all: --no-deps --dest release-vendor pywin32==312
+      - name: Build macOS or Linux candidate
+        if: runner.os != 'Windows'
+        run: python scripts/build_release.py
+      - name: Build Windows candidate
+        if: runner.os == 'Windows'
+        run: python scripts/build_release.py --windows-wheel release-vendor/pywin32-312-cp312-cp312-win_amd64.whl
       - run: python scripts/scan_release.py --artifacts release-artifacts
       - run: python scripts/test_install.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
