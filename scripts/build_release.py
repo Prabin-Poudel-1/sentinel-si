@@ -15,6 +15,13 @@ DIRECTORIES = ('agent_harness', 'control_plane', 'sentinel_sdk', 'sentinel_sync'
 SUFFIXES = {'.py', '.json', '.cedar', '.html', '.css', '.js', '.svg', '.md'}
 
 
+def _case_insensitive_collisions(paths):
+    folded = {}
+    for path in paths:
+        folded.setdefault(path.casefold(), []).append(path)
+    return {key: names for key, names in folded.items() if len(names) > 1}
+
+
 def build(binary, output):
     files = {}
     for directory in DIRECTORIES:
@@ -29,6 +36,9 @@ def build(binary, output):
     files['bin/sentinel-runtime'] = binary.read_bytes()
     if b'/Users/' in files['bin/sentinel-runtime'] or b'/home/runner/' in files['bin/sentinel-runtime']:
         raise ValueError('Build with RUSTFLAGS=--remap-path-prefix=<build-root>=/sentinel-build')
+    collisions = _case_insensitive_collisions(files)
+    if collisions:
+        raise ValueError(f'Case-insensitive name collision in package: {collisions}')
     manifest = {'version': VERSION, 'system': platform.system(), 'machine': platform.machine(),
                 'files': {name: hashlib.sha256(data).hexdigest() for name, data in sorted(files.items())},
                 'provenance': 'Local build; unsigned and not notarized; see CI and Cargo.lock'}
