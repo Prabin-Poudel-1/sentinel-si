@@ -37,7 +37,8 @@ jobs:
       - run: python scripts/third_party.py
       - name: Download offline Windows dependency
         if: runner.os == 'Windows'
-        run: python -m pip download --only-binary=:all: --no-deps --dest release-vendor pywin32==312
+        run: |
+          python -m pip download --only-binary=:all: --no-deps --dest release-vendor pywin32==312
       - name: Build macOS or Linux candidate
         if: runner.os != 'Windows'
         run: python scripts/build_release.py
