@@ -33,7 +33,7 @@ if ($env:SENTINEL_INSTALL_ACL_MODE -eq 'create') {
     }
     [System.IO.Directory]::CreateDirectory($p, $newAcl) | Out-Null
 }
-$acl = Get-Acl -LiteralPath $p
+$acl = [System.IO.Directory]::GetAccessControl($p)
 if (-not $acl.AreAccessRulesProtected) { throw 'Install DACL is not protected' }
 if ($acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value -ne $current.Value) { throw 'Unexpected install directory owner' }
 $rules = $acl.GetAccessRules($true, $false, [System.Security.Principal.SecurityIdentifier])
