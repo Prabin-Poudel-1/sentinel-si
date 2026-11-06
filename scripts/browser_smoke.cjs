@@ -17,7 +17,7 @@ const assert = require('node:assert/strict');
   browser=await chromium.launch({headless:true,channel:process.env.BROWSER_CHANNEL||undefined});
   const page=await browser.newPage({viewport:{width:1512,height:1080}});
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
-  await page.goto(fixture.url);await page.getByLabel('Administrator password').fill(fixture.password);
+  await page.goto(fixture.url);await page.locator('#password').fill(fixture.password);
   await page.getByRole('button',{name:'Authenticate',exact:false}).click();
   await page.locator('#console').waitFor({state:'visible'});
   assert.equal(await page.locator('#allowed').innerText(),'0');
