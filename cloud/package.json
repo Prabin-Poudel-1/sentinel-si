@@ -8,7 +8,7 @@
     "migrate:local": "wrangler d1 migrations apply sentinel-local --local"
   },
   "devDependencies": {
-    "wrangler": "4.150.0"
+    "wrangler": "4.158.0"
   },
   "engines": {
     "node": ">=22.13"
