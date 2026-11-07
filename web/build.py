@@ -8,11 +8,93 @@ def page(title,content):
 home='''<section class="hero"><div><p class="eyebrow">LOCAL-FIRST AGENT SECURITY</p><h1>Your agent can propose.<br><em>Only policy can permit.</em></h1><p class="lede">Put an independent security gateway between an AI agent and its tools. Keep task authority on your machine, even when the instructions it reads cannot be trusted.</p><div class="actions"><a class="button" href="/downloads.html">Get Sentinel AI <span>↗</span></a><a class="button secondary" href="/docs.html">Read the documentation</a></div><p class="caption">Rust enforcement · Python integration · Optional cloud visibility</p></div><div class="flow-panel" aria-label="Architecture illustration, not live activity"><div class="panel-label">THE AUTHORIZATION BOUNDARY <span>01 / LOCAL</span></div><div class="flow-node"><span class="number">01</span><div><strong>AI agent</strong><small>Untrusted proposal</small></div><code>read_file</code></div><div class="flow-line">↓</div><div class="flow-node gateway"><span class="number">02</span><div><strong>Sentinel gateway</strong><small>Identity · Scope · Expiry · Policy</small></div><span class="tag">TRUSTED</span></div><div class="decision-row"><span>ALLOW</span><span>DENY</span><span>APPROVAL</span></div><div class="flow-line">↓</div><div class="flow-node"><span class="number">03</span><div><strong>Restricted tool</strong><small>Execute only after authorization</small></div></div><p class="caption">Illustrative request flow. Every supported action receives its own decision and audit record.</p></div></section><section class="statement"><p class="eyebrow">AUTHORIZATION IS NOT A MODEL OUTPUT</p><h2>Useful autonomy needs<br>a separate source of authority.</h2><p>A malicious document can influence a model. It cannot sign a task contract, grant an approval or expand the gateway’s permissions. Sentinel enforces those decisions in trusted code outside the model.</p></section><section><div class="section-head"><h2>Small permissions.<br>Clear boundaries.</h2><a href="/features.html">Explore the controls ↗</a></div><div class="three"><article><span class="index">01 / AUTHORIZE</span><h3>Bound every task</h3><p>Signed contracts describe which operations and exact resources a task may use, and when that authority expires.</p></article><article><span class="index">02 / ENFORCE</span><h3>Check every request</h3><p>Default-deny policy, one-time approvals and restricted execution keep decisions separate from model-generated instructions.</p></article><article><span class="index">03 / OBSERVE</span><h3>Understand the outcome</h3><p>Inspect local audit records. Optionally synchronize an allowlist of event metadata to a private account.</p></article></div></section><section class="split-band"><div><p class="eyebrow">YOUR MACHINE IS THE CONTROL PLANE</p><h2>Cloud visibility.<br>Local authority.</h2></div><div><p>The online dashboard observes device-reported events. It cannot run commands, read files, approve actions or edit trusted policies on your computer.</p><p>Synchronization is off by default. Prompts, documents, tool responses, resource names and signing keys stay local.</p><a href="/docs.html#privacy">Read the privacy architecture ↗</a></div></section><section><div class="section-head"><h2>Start with a controlled task.</h2><a href="/docs.html#start">Getting started ↗</a></div><ol class="steps"><li><b>Install a verified package</b><p>Choose a supported platform and verify its checksum before installation.</p></li><li><b>Connect supported tools</b><p>Use the Python SDK to route every protected operation through the Rust gateway.</p></li><li><b>Inspect real decisions</b><p>Run synthetic allowed and denied requests; inspect their local audit records.</p></li></ol><div class="notice">Sentinel does not automatically protect arbitrary applications. Tools that bypass its gateway are outside its security boundary. <a href="/docs.html#limitations">Understand the limitations.</a></div></section>'''
 features='''<section class="page-intro"><p class="eyebrow">SECURITY CONTROLS</p><h1>Enforcement beyond<br>the prompt.</h1><p class="lede">A composable local runtime for supported agent tools. Each control has an explicit scope and a testable outcome.</p></section><section class="feature-list">'''+''.join(f'<article><span class="index">{i:02}</span><div><h2>{a}</h2><p>{b}</p></div></article>' for i,(a,b) in enumerate([
 ('Default-deny authorization','A request is denied unless its authenticated task contract and policy authorize the operation and resource. Model confidence never substitutes for authority.'),('Signed, expiring task contracts','Trusted controllers issue task-scoped authority. Agent-generated instructions cannot modify signatures, permissions or expiration.'),('Human approvals and replay protection','Sensitive authorized operations can require a local authenticated approval. Approvals bind to the exact request and can be consumed only once. The cloud cannot issue them.'),('Revocation and audit correlation','Local task revocation stops the runtime. SQLite records decisions and execution metadata so proposals, authorization and actual execution can be distinguished.'),('Restricted execution','Simulated APIs have no production connectivity. Unix descriptor-pinned file tools and a fixed, bounded Wasm tool provide deliberately narrow execution capabilities.'),('Prompt-injection impact containment','Malicious tool content remains untrusted. Gateway restrictions still apply when a model follows hostile instructions. This is not a claim of detection or complete immunity.'),('Experimental provenance controls','Protected observations can mark a task and block subsequent sinks. This conservative research mechanism is not complete information-flow tracking.'),('Optional private telemetry','Only explicitly allowed event metadata may leave the device. Cloud outages do not change local authorization; cloud events are endpoint reports, not tamper-proof evidence.')],1))+'''</section><section class="notice">Native Windows filesystem isolation remains disabled. WSL2 is the documented Windows alternative; native Windows compatibility is not advertised as verified.</section>'''
-downloads='''<section class="page-intro"><p class="eyebrow">INSTALL SENTINEL AI</p><h1>Bring the gateway<br>to your machine.</h1><p class="lede">Candidate 0.3.0-rc.1 artifacts are prepared for owner-controlled publication. Source code is available in the <a href="https://github.com/Prabin-Poudel-1/sentinel-si" rel="noopener noreferrer">official GitHub repository</a>. Installer packages have not yet been published or verified.</p></section><section><div id="release-status" class="notice">Downloads are unavailable until the maintainer publishes and configures an official release. Do not trust packages from an unverified source.</div><div class="three platform-grid"><article><span class="index">macOS</span><h2>Apple Silicon</h2><p>Bundled runtime and offline installer tested on Apple Silicon. Python 3.12+ is required; no Rust compiler is needed for the package.</p><button disabled>Release not published</button><small>Unsigned / not notarized unless a release explicitly states otherwise.</small></article><article><span class="index">LINUX</span><h2>Linux</h2><p>ARM64 package and installer tested in Debian 12 (glibc 2.36). Linux x86_64 builds remain a CI verification step.</p><button disabled>Release not published</button><small>See the release-specific build and test matrix.</small></article><article><span class="index">WINDOWS 10 / 11</span><h2>Use WSL2</h2><p>Use the Linux source route inside WSL2 with a matching architecture. WSL2 itself and native Windows remain unverified; native file-isolation tools are disabled.</p><button disabled>Release not published</button><small>Do not interpret source portability as verified native protection.</small></article></div><h2>Verify before you install.</h2><p>Download an artifact and its checksum manifest from the same official release. Inspect the release identity and any available provenance attestations. A checksum detects file changes; it does not establish publisher identity.</p><pre><code># macOS — verify the downloaded checksum file
-shasum -a 256 -c sentinel-ai-0.3.0-rc.1-darwin-arm64.tar.gz.sha256
+downloads='''
+<section class="page-intro">
+  <p class="eyebrow">INSTALL SENTINEL AI</p>
+  <h1>Download Sentinel AI</h1>
+  <p class="lede">
+    Version 0.3.0-rc.1 - Public prerelease
+  </p>
+</section>
+<section>
+  <div class="notice">
+    Research prerelease. Not production certified.
+    Packages are unsigned and not notarized.
+  </div>
+  <div class="three platform-grid">
 
-# Linux / WSL2 — from the release download directory
-sha256sum -c sentinel-ai-0.3.0-rc.1-linux-aarch64.tar.gz.sha256</code></pre><p>Never disable Gatekeeper, Defender, your firewall or system integrity controls. Never pipe an unverified download into a shell.</p><a class="button secondary" href="/docs.html#install">Installation and upgrade guide ↗</a></section>'''
+    <article>
+      <span class="index">macOS</span>
+      <h2>Apple Silicon</h2>
+      <p>Version 0.3.0-rc.1</p>
+      <a class="button" href="https://github.com/Prabin-Poudel-1/sentinel-si/releases/download/v0.3.0-rc.1/sentinel-ai-0.3.0-rc.1-darwin-arm64.tar.gz">
+        Download
+      </a>
+      <p>
+        <a href="https://github.com/Prabin-Poudel-1/sentinel-si/releases/download/v0.3.0-rc.1/sentinel-ai-0.3.0-rc.1-darwin-arm64.tar.gz.sha256">
+          SHA-256 checksum
+        </a>
+      </p>
+    </article>
+    
+
+    <article>
+      <span class="index">macOS</span>
+      <h2>Intel</h2>
+      <p>Version 0.3.0-rc.1</p>
+      <a class="button" href="https://github.com/Prabin-Poudel-1/sentinel-si/releases/download/v0.3.0-rc.1/sentinel-ai-0.3.0-rc.1-darwin-x86_64.tar.gz">
+        Download
+      </a>
+      <p>
+        <a href="https://github.com/Prabin-Poudel-1/sentinel-si/releases/download/v0.3.0-rc.1/sentinel-ai-0.3.0-rc.1-darwin-x86_64.tar.gz.sha256">
+          SHA-256 checksum
+        </a>
+      </p>
+    </article>
+    
+
+    <article>
+      <span class="index">Linux</span>
+      <h2>ARM64</h2>
+      <p>Version 0.3.0-rc.1</p>
+      <a class="button" href="https://github.com/Prabin-Poudel-1/sentinel-si/releases/download/v0.3.0-rc.1/sentinel-ai-0.3.0-rc.1-linux-aarch64.tar.gz">
+        Download
+      </a>
+      <p>
+        <a href="https://github.com/Prabin-Poudel-1/sentinel-si/releases/download/v0.3.0-rc.1/sentinel-ai-0.3.0-rc.1-linux-aarch64.tar.gz.sha256">
+          SHA-256 checksum
+        </a>
+      </p>
+    </article>
+    
+
+    <article>
+      <span class="index">Linux</span>
+      <h2>x86-64</h2>
+      <p>Version 0.3.0-rc.1</p>
+      <a class="button" href="https://github.com/Prabin-Poudel-1/sentinel-si/releases/download/v0.3.0-rc.1/sentinel-ai-0.3.0-rc.1-linux-x86_64.tar.gz">
+        Download
+      </a>
+      <p>
+        <a href="https://github.com/Prabin-Poudel-1/sentinel-si/releases/download/v0.3.0-rc.1/sentinel-ai-0.3.0-rc.1-linux-x86_64.tar.gz.sha256">
+          SHA-256 checksum
+        </a>
+      </p>
+    </article>
+    
+  </div>
+  <p>
+    Native Windows is not verified.
+    See the WSL2 installation documentation.
+  </p>
+  <p>
+    Verify package checksums before installation.
+  </p>
+  <a class="button secondary" href="/docs.html#install">
+    Installation guide
+  </a>
+</section>
+'''
 docs='''<section class="page-intro"><p class="eyebrow">DOCUMENTATION</p><h1>A clear boundary.<br>An explicit integration.</h1><p class="lede">Start locally, verify the enforcement path, then opt into cloud visibility.</p></section><div class="docs-layout"><aside aria-label="Documentation sections">'''+''.join(f'<a href="#{a}">{b}</a>' for a,b in [('install','Installation'),('start','Local runtime'),('integrate','Agent integration'),('operations','Supported tools'),('link','Link a device'),('privacy','Privacy'),('limitations','Security limits'),('trouble','Troubleshooting'),('remove','Uninstall'),('disclosure','Disclosure')])+'''</aside><div class="prose"><section id="install"><h2>Installation</h2><p>Use a platform-matched official GitHub release once published. Verify the checksum before extracting. Python 3.12+ is required; source builds additionally require the Rust toolchain specified in the repository. Native Windows filesystem isolation is unavailable; prefer WSL2.</p><p>The source repository contains the complete installer, upgrade and release verification instructions. No repository URL is configured here yet; the maintainer must set it before publication.</p></section><section id="start"><h2>Start the local runtime</h2><p>From your installed source directory, create a virtual environment, install the project using the repository’s instructions, and initialize a local administrator. Choose your own password; there is no default credential.</p><pre><code>python3.12 -m venv .venv
 cargo build --locked
 .venv/bin/python -m control_plane.server --init
